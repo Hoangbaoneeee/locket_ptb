@@ -1,0 +1,44 @@
+#!name=Locket Gold Only
+#!desc=Được rút gọn chỉ giữ lại cấu hình cơ bản và Locket Gold
+#!author=ngnggia23
+#!icon=https://dinhduyvinh.loc.cc/assets/img/shadowrocket.webp
+#!howtouse=Shadowrocket
+[General]
+bypass-system = true
+skip-proxy = *.local, *.crashlytics.com
+tun-excluded-routes = 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12
+update-url = https://cdn.jsdelivr.net/gh/dinhduyvinh09/AppPre@refs/heads/main/All_In_One.conf
+[Rule]
+AND,((DOMAIN-SUFFIX,googlevideo.com),(PROTOCOL,UDP)),REJECT
+AND,((DOMAIN,youtubei.googleapis.com),(PROTOCOL,UDP)),REJECT
+[URL Rewrite]
+# Chặn quảng cáo Google Video
+^https?:\/\/[\w-]+\.googlevideo\.com\/(?!(dclk_video_ads|videoplayback\?)).+&oad _ reject-200
+# YouTube Ads
+^https?:\/\/(www|s)\.youtube\.com\/api\/stats\/ads _ reject-200
+^https?:\/\/(www|s)\.youtube\.com\/(pagead|ptracking) _ reject-200
+^https?:\/\/s\.youtube\.com\/api\/stats\/qoe\?adcontext _ reject-200
+# General Video Ad request
+(^https?:\/\/[\w-]+\.googlevideo\.com\/(?!dclk_video_ads).+?)&ctier=L(&.+?),ctier,(.+) $1$2$3 302
+[Header Rewrite]
+http-request '^https?://api.revenuecat.com/.+/(receipts$|subscribers/?(.*?)*$)' header-del x-revenuecat-etag
+http-request '^https?://api.revenuecat.com/.+/(receipts$|subscribers/?(.*?)*$)' header-del X-RevenueCat-ETag
+http-request ^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/user-customization-service\/v1\/customize$ header-del if-none-match
+[Map Local]
+^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&oad 'data-type=text data="" status-code=200'
+[Script]
+#LocketGold
+#hostname = api.revenuecat.com, firebaseremoteconfig.googleapis.com
+revenuecat = type=http-response, pattern=^https:\/\/api\.revenuecat\.com\/.+\/(receipts$|subscribers\/[^/]+$), script-path=https://raw.githubusercontent.com/Hoangbaoneeee/locket_ptb/refs/heads/main/LKG_PTB_taphoacongnghe, requires-body=true, max-size=-1, timeout=60
+deleteHeader = type=http-request, pattern=^https:\/\/api\.revenuecat\.com\/.+\/(receipts|subscribers), script-path=https://raw.githubusercontent.com/Hoangbaoneeee/locket_ptb/refs/heads/main/LKG_PTB_t1, timeout=60
+locket_rc = type=http-response, pattern=^https:\/\/firebaseremoteconfig\.googleapis\.com\/v1\/projects\/locket-4252a\/.+, script-path=https://raw.githubusercontent.com/Hoangbaoneeee/locket_ptb/refs/heads/main/LKG_PTB_V1.1, requires-body=true, max-size=-1, timeout=60
+#************************************#
+#RevenueCatVip
+#hostname = api.revenuecat.com
+RevenueCatVip = type=http-response, pattern=^ht
+[MITM]
+ca-passphrase = MbjdJBeD
+ca-p12 = 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
+enable = true
+h2 = true
+hostname = %APPEND%, *.googlevideo.com, youtubei.googleapis.com, www.youtube.com, s.youtube.com, -redirector*.googlevideo.com, premium*.truecaller.com, sub.store, api.revenuecat.com, firebaseremoteconfig.googleapis.com, api.rc-backup.com, buy.itunes.apple.com, spclient.wg.spotify.com, *spclient.spotify.com, api-mobile.soundcloud.com, api.picsart.com, us-central1-alight-creative.cloudfunctions.net, api-sub.meitu.com, photos.adobe.io, , ap*.intsig.net, api-account.kinemasters.com, api.mr.pixocial.com, newbeee-api.beautyplus.com, user-snow-api.snow.me, h5.xiuxiu.meitu.com, api.xiuxiu.meitu.com, gs-loc.apple.com, gs-loc-cn.apple.com, bluedot.is.autonavi.com, bluedot.is.autonavi.com.gds.alibabadns.com
